@@ -98,8 +98,9 @@ class NetworkWorker(QThread):
 class RemoteView(QWidget):
     """Paint an aspect-fit framebuffer; inverse-map logical coordinates for RFB."""
 
-    def __init__(self, parent=None):
+    def __init__(self, settings, parent=None):
         super().__init__(parent)
+        self.settings = settings
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setMouseTracking(True)
         self.setAttribute(Qt.WidgetAttribute.WA_InputMethodEnabled, True)
@@ -251,16 +252,21 @@ class RemoteView(QWidget):
             return
         self.flush_move()
         self.position = position
-        self.wheel_y += event.angleDelta().y()
-        self.wheel_x += event.angleDelta().x()
-        for axis, positive, negative in (("wheel_y", 8, 16), ("wheel_x", 32, 64)):
+        # Apple's server treats standard RFB wheel clicks as very small movements.
+        # Scale before accumulating so high-resolution wheels retain small deltas.
+        multiplier = self.settings.mac_scroll_multiplier if self.session.is_apple else 1
+        if self.settings.reverse_scroll:
+            multiplier = -multiplier
+        self.wheel_x += event.angleDelta().x() * multiplier
+        self.wheel_y += event.angleDelta().y() * multiplier
+        steps = []
+        for axis in ("wheel_x", "wheel_y"):
             delta = getattr(self, axis)
-            while abs(delta) >= 120:
-                bit = positive if delta > 0 else negative
-                self.session.pointer(*position, self.buttons | bit)
-                self.session.pointer(*position, self.buttons)
-                delta += -120 if delta > 0 else 120
-            setattr(self, axis, delta)
+            direction = 1 if delta >= 0 else -1
+            count, remainder = divmod(abs(delta), 120)
+            steps.append(direction * count)
+            setattr(self, axis, direction * remainder)
+        self.session.scroll(*position, self.buttons, *steps)
         event.accept()
 
     def keyPressEvent(self, event):
@@ -324,7 +330,7 @@ class MainWindow(QMainWindow):
         self.stack = QStackedWidget()
         self.setCentralWidget(self.stack)
         self._make_start()
-        self.view = RemoteView()
+        self.view = RemoteView(self.settings)
         self.view.retry.clicked.connect(self.start_connection)
         self.stack.addWidget(self.view)
         self.apply_language()

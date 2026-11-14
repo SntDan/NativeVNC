@@ -40,6 +40,8 @@ For VS Code, open the project root, select `.venv\Scripts\python.exe`, press F5,
 - The remote window remembers its position, size, maximized state, and F11 full-screen state. After connecting, its normal size is adjusted to the remote aspect ratio and available screen area. Disable **Remember last window size** to use the default width instead; maximized and full-screen states are still remembered.
 - Drag the standard window borders to resize, drag the title bar to move, or double-click it to maximize or restore. The remote image scales proportionally without changing the remote resolution. Clicks in letterboxed areas are ignored.
 - Mouse input supports remote cursor shapes, left/right/middle buttons, dragging, and horizontal/vertical scrolling. Keyboard and mouse input are sent independently of frame reception; redundant pointer moves and obsolete pending frames are coalesced to reduce delay.
+- **Mac scroll speed:** some macOS Screen Sharing versions interpret standard VNC wheel events as tiny movements ([upstream report](https://github.com/TigerVNC/tigervnc/issues/1741)). NativeVNC compensates for detected Mac connections with a default 50× wheel multiplier. Adjust **Settings → Mac scroll speed** from 1× to 100×; lower it if apps such as Terminal scroll too fast. Standard VNC connections keep their original speed. Scroll events are batched, with a limit of 500 steps per axis per wheel event to avoid excessive bursts.
+- **Reverse scroll direction** in Settings is off by default. Enable it to reverse both horizontal and vertical scrolling for all connections; the choice is saved.
 - The connected view fills the client area with no in-app buttons, toolbars, or extra margins. Window controls use native Windows components. F11 toggles full screen and hides the system title bar; other ordinary keystrokes go to the remote computer. Losing focus releases held remote keys and mouse buttons.
 - A dropped connection retains the last frame and offers **Reconnect**. Close the window to end the session and exit.
 
@@ -154,6 +156,8 @@ python -m venv .venv
 - 断开或退出时记忆共享屏幕窗口的位置、尺寸、Windows 最大化和 F11 全屏状态，点击关闭时立即保存。登录页仍以普通窗口打开，连接成功后恢复上次最大化或全屏状态；普通窗口收到首帧后，以记忆的窗口宽度为起点，重新按远端画面比例调整客户区，避免旧尺寸产生空白边，并计入 Windows 标题栏和边框，适应当前显示器的可用区域。远端分辨率变化或退出全屏回到普通窗口时也会重新调整。
 - 拖动 Windows 标准窗口边缘或四角调整大小；拖动系统标题栏移动窗口，双击标题栏最大化或还原。画面等比适应，不改变远端分辨率。黑边不向远端发送点击。
 - 鼠标使用本地系统光标，支持远端光标形状、左右键、中键、拖拽和横纵滚轮。未收到远端光标时使用系统箭头。
+- **Mac 滚轮速度**：部分 macOS 屏幕共享版本会把标准 VNC 滚轮事件解释为很小的位移（[上游问题记录](https://github.com/TigerVNC/tigervnc/issues/1741)）。客户端仅对识别出的 Mac 连接默认使用 50× 滚轮补偿，可在“设置 → Mac 滚轮速度”中调整为 1×–100×；若终端等应用滚动过快，可调低倍率。普通 VNC 连接保持原始速度。滚轮事件批量发送，每次输入的每个轴最多发送 500 步，避免过量突发输入。
+- 设置中的“反转滚轮方向”默认关闭。开启后反转所有连接的横向和纵向滚动，并记住选择。
 - 键鼠输入独立发送，不等待图像接收超时；鼠标移动按需合并，空闲时不启动移动定时器。界面忙时直接显示最新完整画面，避免旧帧排队积累延迟。优先使用 CopyRect 在画面缓冲区内复制滚动区域，减少临时内存分配，并向支持的服务端请求低压缩等级，以减少编码开销。
 - 连接成功后没有任何应用内按钮或工具栏，远程画面填满客户区，四周没有额外留白；窗口控件使用 Windows 原生组件。F11 切换全屏，全屏时隐藏系统标题栏。其他常规键盘输入发给远端。
 - 失去焦点时释放远端按键和鼠标按钮。断线保留最后画面，点击“重新连接”重试；使用系统关闭按钮结束连接并退出。

@@ -48,6 +48,9 @@ def apply_appearance(window, dark):
                               font-size: 16px; }
         QPushButton#connect:hover { background: %(hover)s; }
         QPushButton#settings { padding: 0 8px; font-size: 12px; }
+        QDialogButtonBox#settingsButtons QPushButton { border: 1px solid %(border)s;
+                                                       min-width: 64px; }
+        QDialogButtonBox#settingsButtons QPushButton:focus { border-color: palette(highlight); }
         QCheckBox { spacing: 6px; }
         QWidget#connectionOverlay { background: %(surface)s; border: 1px solid %(border)s;
                                    border-radius: 2px; }

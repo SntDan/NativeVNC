@@ -13,6 +13,12 @@ LANGUAGES = (("English", "en"), ("简体中文", "zh_CN"))
 ENGLISH = {
     "设置": "Settings",
     "语言": "Language",
+    "Mac 滚轮速度": "Mac scroll speed",
+    "反转滚轮方向": "Reverse scroll direction",
+    "默认关闭；开启后反转所有连接的横向和纵向滚动。":
+        "Off by default. Reverses horizontal and vertical scrolling for all connections when enabled.",
+    "仅用于 Mac 屏幕共享，默认 50×。若终端等应用滚动过快，可调低；1× 为原始速度。":
+        "Only for Mac Screen Sharing; default 50×. Lower it if apps such as Terminal scroll too fast; 1× is the original speed.",
     "记忆上次窗口大小": "Remember last window size",
     "仅影响普通窗口的尺寸和位置，仍会记忆最大化和全屏状态。":
         "Only affects normal window size and position. Maximized and fullscreen modes are still remembered.",

@@ -19,6 +19,7 @@ import zlib
 MAX_PIXELS = 32 * 1024 * 1024
 MAX_TEXT = 1024 * 1024
 APPLE_KEY_GUARD_SECONDS = 2.1
+MAX_SCROLL_STEPS = 500
 
 
 class ProtocolError(Exception):
@@ -156,6 +157,20 @@ class Session:
 
     def pointer(self, x, y, buttons):
         self.enqueue(struct.pack("!BBHH", 5, buttons, x, y))
+
+    def scroll(self, x, y, buttons, horizontal, vertical):
+        """Batch wheel press/release pairs, retaining any held mouse buttons."""
+        packets = []
+        for steps, positive, negative in ((vertical, 8, 16), (horizontal, 32, 64)):
+            if not steps:
+                continue
+            bit = positive if steps > 0 else negative
+            pulse = (struct.pack("!BBHH", 5, buttons | bit, x, y) +
+                     struct.pack("!BBHH", 5, buttons, x, y))
+            # Drop excessive whole steps rather than queueing a long scroll tail.
+            packets.append(pulse * min(abs(steps), MAX_SCROLL_STEPS))
+        if packets:
+            self.enqueue(b"".join(packets))
 
     def _send_input(self):
         try:

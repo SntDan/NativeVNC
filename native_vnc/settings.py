@@ -13,6 +13,9 @@ from pathlib import Path
 import tempfile
 
 
+DEFAULT_MAC_SCROLL_MULTIPLIER = 50
+
+
 class Blob(ctypes.Structure):
     _fields_ = [("size", wintypes.DWORD), ("data", ctypes.POINTER(ctypes.c_ubyte))]
 
@@ -62,9 +65,19 @@ class Settings:
         value = self.values.get("remember_window_size", True)
         return value if isinstance(value, bool) else True
 
-    def set_preferences(self, language, remember_window_size):
+    @property
+    def mac_scroll_multiplier(self):
+        value = self.values.get("mac_scroll_multiplier", DEFAULT_MAC_SCROLL_MULTIPLIER)
+        return value if type(value) is int and 1 <= value <= 100 else DEFAULT_MAC_SCROLL_MULTIPLIER
+
+    @property
+    def reverse_scroll(self):
+        return self.values.get("reverse_scroll") is True
+
+    def set_preferences(self, language, remember_window_size, mac_scroll_multiplier, reverse_scroll):
         previous = self.values
-        updated = {**previous, "language": language, "remember_window_size": remember_window_size}
+        updated = {**previous, "language": language, "remember_window_size": remember_window_size,
+                   "mac_scroll_multiplier": mac_scroll_multiplier, "reverse_scroll": reverse_scroll}
         if not remember_window_size and isinstance(updated.get("desktop_window"), dict):
             updated["desktop_window"] = dict(updated["desktop_window"])
             updated["desktop_window"].pop("geometry", None)
