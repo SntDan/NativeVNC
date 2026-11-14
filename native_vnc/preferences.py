@@ -15,6 +15,7 @@ from .i18n import LANGUAGES, translate
 class SettingsDialog(QDialog):
     def __init__(self, settings, parent=None):
         super().__init__(parent)
+        self.setObjectName("settingsDialog")
         self.settings = settings
         layout = QVBoxLayout(self)
         layout.setContentsMargins(18, 18, 18, 18)
@@ -34,15 +35,14 @@ class SettingsDialog(QDialog):
         form.addRow(self.scroll_label, self.scroll_multiplier)
         layout.addLayout(form)
         self.reverse_scroll = QCheckBox()
-        self.reverse_scroll.setMinimumHeight(24)
         self.reverse_scroll.setChecked(settings.reverse_scroll)
         layout.addWidget(self.reverse_scroll)
         self.remember_window = QCheckBox()
-        self.remember_window.setMinimumHeight(24)
         self.remember_window.setChecked(settings.remember_window_size)
         layout.addWidget(self.remember_window)
         self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
         self.buttons.setObjectName("settingsButtons")
+        self.buttons.setCenterButtons(True)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
         layout.addWidget(self.buttons)

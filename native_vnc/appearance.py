@@ -41,17 +41,15 @@ def apply_appearance(window, dark):
         QPushButton { background: transparent; color: %(text)s; border: none;
                       border-radius: 4px; padding: 5px 12px; }
         QPushButton:hover { background: %(hover)s; }
-        QPushButton:pressed { background: %(border)s; }
         QPushButton:disabled { color: %(disabled)s; }
-        QPushButton:focus { color: palette(highlight); }
         QPushButton#connect { background: %(surface)s; min-height: 22px;
                               font-size: 16px; }
         QPushButton#connect:hover { background: %(hover)s; }
         QPushButton#settings { padding: 0 8px; font-size: 12px; }
         QDialogButtonBox#settingsButtons QPushButton { border: 1px solid %(border)s;
                                                        min-width: 64px; }
-        QDialogButtonBox#settingsButtons QPushButton:focus { border-color: palette(highlight); }
         QCheckBox { spacing: 6px; }
+        QDialog#settingsDialog QCheckBox { padding: 3px; }
         QWidget#connectionOverlay { background: %(surface)s; border: 1px solid %(border)s;
                                    border-radius: 2px; }
         QLabel#connectionMessage { color: %(text)s; font-size: 13px; }
